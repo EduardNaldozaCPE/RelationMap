@@ -6,7 +6,7 @@ onload=()=>{
     const cvs = document.getElementById('cvs');
     const rm = new RelationMap(cvs);
     for (let i = 0; i < assets.length; i++) {
-        rm.addItem( { ...assets[i] } );
+        rm.addItem( { ...assets[i] });
     }
     rm.draw();
 };
