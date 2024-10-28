@@ -14,7 +14,7 @@ export default class RelationMap {
             };
         }
     }
-    start() {
+    draw() {
         if (this.items.length <= 0)
             return;
         for (let i = 0; i < this.items.length; i++) {
@@ -22,7 +22,10 @@ export default class RelationMap {
         }
     }
     addItem(assetDetails, icon = "") {
-        let newAsset = new AssetBox(assetDetails.name, icon, { x: 30, y: 30 }, this.options.defaultBoxSize);
+        let newAsset = new AssetBox(assetDetails.name, icon, {
+            x: 30 + (this.options.defaultBoxSize.w * this.items.length * 1.5),
+            y: 30
+        }, this.options.defaultBoxSize);
         this.items.push(newAsset);
     }
 }

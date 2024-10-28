@@ -30,21 +30,6 @@
     <h2>Relation Map</h2>
     
     <canvas id="cvs" width="800px" height="600px"></canvas>
-    <script type="module">
-        import RelationMap from "./relationmap/relationmap.js";
-        onload=()=>{
-            const cvs = document.getElementById('cvs');
-            const rm = new RelationMap(cvs);
-            rm.addItem(
-                {
-                    id: '1',
-                    type: "Person",
-                    name: "Ooga",
-                    owns: []
-                }
-            );
-            rm.start();
-        };
-    </script>
+    <script type="module" src="./index.js"></script>
 </body>
 </html>
