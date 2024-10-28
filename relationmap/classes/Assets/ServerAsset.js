@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ServerAsset = void 0;
-class ServerAsset {
+export class ServerAsset {
     constructor(assetDetails, os, version) {
         this.owns = [];
         this.id = assetDetails.id;
@@ -14,4 +11,3 @@ class ServerAsset {
         this.version = version;
     }
 }
-exports.ServerAsset = ServerAsset;

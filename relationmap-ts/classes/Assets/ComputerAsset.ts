@@ -1,6 +1,6 @@
-import { IAsset, AssetType } from "../interfaces";
+import { IAsset, AssetType } from "../../interfaces.js";
 
-export class ServerAsset implements IAsset {
+export class ComputerAsset implements IAsset { 
     id: string;
     type: AssetType;
     name: string;
@@ -8,7 +8,7 @@ export class ServerAsset implements IAsset {
 
     os: string;
     version: string;
-    
+
     constructor(assetDetails:IAsset, os:string, version:string) {
         this.id = assetDetails.id;
         this.type = assetDetails.type;
@@ -20,4 +20,6 @@ export class ServerAsset implements IAsset {
         this.os = os;
         this.version = version;
     }
-} 
+
+    
+}

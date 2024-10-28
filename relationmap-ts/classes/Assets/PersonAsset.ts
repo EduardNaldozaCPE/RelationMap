@@ -1,4 +1,4 @@
-import { IAsset, AssetType } from "../interfaces";
+import { IAsset, AssetType } from "../../interfaces.js";
 
 export class PersonAsset implements IAsset {
     id: string;

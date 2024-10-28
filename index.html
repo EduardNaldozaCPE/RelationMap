@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relation Map</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             display: flex;
             flex-direction: column;
@@ -23,6 +28,23 @@
 </head>
 <body>
     <h2>Relation Map</h2>
+    
     <canvas id="cvs" width="800px" height="600px"></canvas>
+    <script type="module">
+        import RelationMap from "./relationmap/relationmap.js";
+        onload=()=>{
+            const cvs = document.getElementById('cvs');
+            const rm = new RelationMap(cvs);
+            rm.addItem(
+                {
+                    id: '1',
+                    type: "Person",
+                    name: "Ooga",
+                    owns: []
+                }
+            );
+            rm.start();
+        };
+    </script>
 </body>
 </html>
