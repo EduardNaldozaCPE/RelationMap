@@ -1,5 +1,5 @@
 import AssetBox from "./classes/Objects/AssetBox.js";
-import { IAsset, Size } from "./interfaces.js";
+import { IAsset, Position, Size } from "./interfaces.js";
 
 interface RelationMapOptions {
     canvasSize: Size,
@@ -49,8 +49,8 @@ export default class RelationMap {
             assetDetails.name,
             icon,
             {
-                x: 30 + (this.items[layer].length * this.options.gap * (this.options.defaultBoxSize.w)), 
-                y: 30 + (this.options.defaultBoxSize.h * layer * this.options.gap)
+                x: 30 + (this.options.gap + this.options.defaultBoxSize.w) * this.items[layer].length, 
+                y: 30
             },
             this.options.defaultBoxSize,
             layer,
@@ -81,37 +81,33 @@ export default class RelationMap {
      * Only after you add all the items do you arrange their positions
      */
     private __arrange_items() {
-        console.log(this.items);
-        let startX = 0;
-        for (let asset = 0; asset < this.items[0].length; asset++) {
-            let currentAsset = this.items[0][asset];
-            // Calculate children's x positions
-            // TODO : Make Recursive
-            let offsetX = 0;
-            for (let child = 0; child < currentAsset.nChildren; child++) {
-                let currentChild = currentAsset.children[child];
-                offsetX = child * (this.options.defaultBoxSize.w * (currentAsset.nChildren-1));
-                currentChild.pos.x = (startX + offsetX)
-                currentChild.pos.y = currentAsset.pos.y + this.options.defaultBoxSize.h + this.options.gap;
-            }
-            // Calculate own x position
-            let x = 0;
-            for (let child = 0; child < currentAsset.children.length; child++) {
-                x += currentAsset.children[child].pos.x;
-            }
-            currentAsset.pos.x = x / currentAsset.nChildren;
-            currentAsset.pos.y = this.options.defaultBoxSize.h + this.options.gap;
-            startX += offsetX + this.options.defaultBoxSize.w * 1.5;
-        }
+        let startPos: Position = { x:100, y:200 };
+        let maxDist: Size = { w:0, h:0 };
+        this.__spreadOut(this.items[0][0], startPos, maxDist);
     }
 
-    // private __calc_childWidth(children:Array<AssetBox>): number {
-    //     let addedWidth = 0;
-    //     for (let child = 0; child < children.length; child++) {
-    //         if (children[child].nChildren < 0)
-    //             addedWidth += this.__calc_childWidth(children[child].children)
-    //     }
-    //     let nChildren = children.length;
-    //     return addedWidth + (nChildren * (this.options.defaultBoxSize.w + this.options.gap));
-    // }
+    private __spreadOut(currentAsset: AssetBox, cursor: Position, maxDist:Size) {
+        // Go down the descendant tree and spread each asset out accd to the number of siblings
+        if (currentAsset.nChildren > 0) {
+            cursor.y += this.options.defaultBoxSize.h + this.options.gap;
+            for (let child = 0; child < currentAsset.nChildren; child++) {
+                let currentChild = currentAsset.children[child];
+                this.__spreadOut(currentChild, cursor, maxDist);
+            }
+            
+            cursor.x = ((currentAsset.children[currentAsset.nChildren-1].pos.x + currentAsset.children[0].pos.x) / 2);
+            cursor.y -= this.options.defaultBoxSize.h + this.options.gap;
+        }
+        
+        currentAsset.pos.x = cursor.x;
+        currentAsset.pos.y = cursor.y;
+
+        // Move cursor 
+        if (maxDist.w > cursor.x) {
+            cursor.x = maxDist.w;
+        } else {
+            cursor.x += this.options.defaultBoxSize.w + this.options.gap;
+            maxDist.w = cursor.x;
+        }
+    }
 }
