@@ -8,6 +8,10 @@ export default class AssetBox {
         this.layer = layer;
         this.nChildren = nChildren;
     }
+    moveBy(pos) {
+        this.pos.x += pos.x;
+        this.pos.y += pos.y;
+    }
     draw(ctx) {
         let lineHeight = 12;
         ctx.font = `${lineHeight}px arial`;

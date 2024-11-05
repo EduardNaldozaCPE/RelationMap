@@ -2,6 +2,7 @@ import AssetBox from "./classes/Objects/AssetBox.js";
 export default class RelationMap {
     constructor(canvasElement, options) {
         this.items = [[]]; // 2D Array -> Layer x Asset
+        this.mapPos = { x: 0, y: 0 };
         this.canvas = canvasElement;
         this.context = canvasElement.getContext('2d');
         if (options) {
@@ -11,17 +12,30 @@ export default class RelationMap {
             this.options = {
                 canvasSize: { w: canvasElement.width, h: canvasElement.height },
                 defaultBoxSize: { w: 50, h: 50 },
-                gap: 15
+                gap: 30
             };
         }
+        this.canvas.onmousemove = (ev) => {
+            ev.preventDefault();
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.draw();
+            if (ev.buttons == 1)
+                this.moveItems({ x: ev.movementX, y: ev.movementY });
+        };
     }
     draw() {
-        this.__arrange_items();
         if (this.items.length <= 0)
             return;
         for (let i = 0; i < this.items.length; i++) {
             for (let j = 0; j < this.items[i].length; j++) {
                 this.items[i][j].draw(this.context);
+            }
+        }
+    }
+    moveItems(pos) {
+        for (let i = 0; i < this.items.length; i++) {
+            for (let j = 0; j < this.items[i].length; j++) {
+                this.items[i][j].moveBy(Object.assign({}, pos));
             }
         }
     }
@@ -38,7 +52,6 @@ export default class RelationMap {
             y: 30
         }, this.options.defaultBoxSize, layer, (_a = assetDetails.owns) === null || _a === void 0 ? void 0 : _a.length);
         this.items[layer].push(newAsset);
-        console.log(`Item "${assetDetails.name}" Added. Layer ${layer}.`);
         // Add this to parent's children array if layer > 0
         if (layer > 0) {
             this.items[layer - 1][this.items[layer - 1].length - 1].addChild(newAsset);
@@ -60,18 +73,13 @@ export default class RelationMap {
     /**
      * Only after you add all the items do you arrange their positions
      */
-    __arrange_items() {
-        let startPos = { x: 100, y: 200 };
-        let maxDist = { w: 0, h: 0 };
-        this.__spreadOut(this.items[0][0], startPos, maxDist);
-    }
-    __spreadOut(currentAsset, cursor, maxDist) {
+    arrange_items(currentAsset, cursor, maxDist) {
         // Go down the descendant tree and spread each asset out accd to the number of siblings
         if (currentAsset.nChildren > 0) {
             cursor.y += this.options.defaultBoxSize.h + this.options.gap;
             for (let child = 0; child < currentAsset.nChildren; child++) {
                 let currentChild = currentAsset.children[child];
-                this.__spreadOut(currentChild, cursor, maxDist);
+                this.arrange_items(currentChild, cursor, maxDist);
             }
             cursor.x = ((currentAsset.children[currentAsset.nChildren - 1].pos.x + currentAsset.children[0].pos.x) / 2);
             cursor.y -= this.options.defaultBoxSize.h + this.options.gap;

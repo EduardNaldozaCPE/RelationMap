@@ -17,6 +17,11 @@ export default class AssetBox implements IAssetRender{
         this.nChildren = nChildren;
     }
 
+    moveBy(pos:Position) {
+        this.pos.x += pos.x;
+        this.pos.y += pos.y;
+    }
+
     draw(ctx: CanvasRenderingContext2D) {
         let lineHeight = 12;
         ctx.font = `${lineHeight}px arial`;
